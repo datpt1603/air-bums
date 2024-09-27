@@ -119,6 +119,7 @@ class Bums {
             let data = new FormData();
 
             data.append('id', taskId);
+            data.append('pwd', '');
 
             const response = await axios.post(this.taskFinishUrl, data, {headers: {...this.headers, 'Authorization': `Bearer ${token}` , 'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundarywphPfvZ46AbtTE6E'}});
             return response.data;
@@ -138,6 +139,8 @@ class Bums {
 
                 if (finishTask.msg == 'OK') {
                     this.log(`Đã hoàn thành task: ${task.name}`, 'success');
+                } else {
+                    this.log(`Lỗi khi hoàn thành task: ${finishTask.msg}`, 'error');
                 }
 
                 await this.countdown(Math.floor(20));
