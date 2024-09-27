@@ -114,13 +114,18 @@ class Bums {
     }
 
     async finishTask(token, taskId) {
-        const FormData = require('form-data');
-        let data = new FormData();
+        try {
+            const FormData = require('form-data');
+            let data = new FormData();
 
-        data.append('id', taskId);
+            data.append('id', taskId);
 
-        const response = await axios.post(this.taskFinishUrl, data, {headers: {...this.headers, 'Authorization': `Bearer ${token}` , 'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundarywphPfvZ46AbtTE6E'}});
-        return response.data;
+            const response = await axios.post(this.taskFinishUrl, data, {headers: {...this.headers, 'Authorization': `Bearer ${token}` , 'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundarywphPfvZ46AbtTE6E'}});
+            return response.data;
+        } catch (error) {
+            this.log(`Lỗi khi hoàn thành task: ${error.message}`, 'error');
+            return {msg: 'ERROR'}
+        }
     }
 
     async processTask(token) {
@@ -133,9 +138,9 @@ class Bums {
 
                 if (finishTask.msg == 'OK') {
                     this.log(`Đã hoàn thành task: ${task.name}`, 'success');
-                } else {
-                    this.log(`Lỗi khi hoàn thành task: ${finishTask.msg}`, 'error');
                 }
+
+                await this.countdown(Math.floor(20));
             });
         } catch (error) {
             this.log(`Lỗi khi thực hiện task: ${error.message}`, 'error');
